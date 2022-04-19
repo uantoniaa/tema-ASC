@@ -1,0 +1,16 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    char c;
+    bool ok = 0;
+    scanf("%c", &c);
+    if(c == '-')
+        ok = 1;
+    do{
+        scanf("%c", &c);
+    }while('0' <=  c && c <= '9');
+    if(ok == 0)
+        cout << "Numarul este pozitiv";
+    return 0;
+}
