@@ -1,0 +1,82 @@
+; Ungureanu Maria-Antonia, grupa 161, problema 23
+section .data
+    msg db  "Numarul este pozitiv!"
+    len equ $ - msg
+
+section .bss
+	x_buffer: resd 1
+	x: resd 8
+	y: resd 8
+	p: resd 1
+	cnt: resd 1
+	ok: resd 1
+	minus: resd 1
+
+section .text
+	global _start
+_start:
+	
+	xor eax, eax	; eax = 0
+	
+	mov [x], eax	; x = eax = 0
+	mov [ok], eax	; ok = eax = 0
+	mov [x_buffer], eax
+	
+	mov eax, 0x2d	; eax = ascii code of '-' - 0x2d
+	mov [minus], eax	; minus = ascii code of '-'
+	
+	mov eax, 0x3
+	xor ebx, ebx
+	mov ecx, x_buffer
+	mov edx, 0x1
+	int 0x80
+	
+    mov eax, [x_buffer]
+    cmp eax, [minus]
+    je ok_egal_1
+    jmp et_citire
+    
+    ok_egal_1:
+    mov eax, 0x1
+    mov [ok], eax
+	
+	;reading x
+	et_citire:
+	    xor edx, edx	; edx = 0
+	    mov [x_buffer], edx	; x_buffer = 0
+	    
+    	mov eax, 0x3		; eax = 3 - code for reading
+    	xor ebx, ebx		; ebx = 0 - iostream
+    	mov ecx, x_buffer	; ecx = &x_buffer (the address of x_buffer)
+    	mov edx, 0x1		; edx = 1 - the lenght of the text to be read
+    	int 0x80		; sys int - reading a char and putting it in x_buffer
+    	
+    	mov eax, 0x30 		; eax = 48
+    	
+	;verifies if the read character is a digit
+    	cmp eax, [x_buffer]     ; '0' = eax <= x_buffer
+    	jle verif_mai_mic	; jump if less or equal
+    	jmp afisare 		; skipping the rest of the reading
+    	
+    	verif_mai_mic:
+    	    mov eax, 0x39	; eax = ascii code of '9'
+    	    cmp eax, [x_buffer]	; '9' = eax >= x_buffer
+    	    jge et_citire ; '0' <= x_buffer <= '9'
+    	
+    	    
+    afisare:
+    
+    xor eax, eax
+    cmp eax, [ok]
+    jne terminate
+    
+	mov eax, 0x4
+	mov ebx, 1
+	mov ecx, msg
+	mov edx, len
+	int 0x80
+	
+	terminate:
+    	mov eax, 0x1
+    	xor ebx, ebx
+    	int 0x80
